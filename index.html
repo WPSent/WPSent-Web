@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WPSent: WhatsApp REST API</title>
+<meta name="description" content="Link your WhatsApp by scanning a QR code, then send messages, read logs and receive replies on your webhook with simple HTTP calls.">
+<meta name="theme-color" content="#0b0d17">
+<meta property="og:type" content="website">
+<meta property="og:title" content="WPSent: WhatsApp REST API">
+<meta property="og:description" content="Link your WhatsApp with a QR code, then send messages and receive replies with simple HTTP calls.">
+<meta property="og:image" content="https://raw.githubusercontent.com/WPSent/WPSent/refs/heads/main/public/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/WPSent/WPSent/refs/heads/main/public/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0d17;--s1:#12162a;--s2:#181d36;--line:#252b4a;--tx:#e8eaf6;--mu:#8e95b8;--ac:#26d467;--ac2:#7ee8a5;--ok:#3fd9a6;--r:14px;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;--sans:'Bricolage Grotesque',system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{background:var(--bg);color:var(--tx);font:400 16px/1.65 var(--sans);-webkit-font-smoothing:antialiased;background-image:radial-gradient(900px 500px at 85% -10%,#0d4a2f 0,transparent 60%),radial-gradient(700px 400px at -10% 20%,#17304a 0,transparent 60%);background-repeat:no-repeat}
+a{color:var(--ac2);text-decoration:none}a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--ac);outline-offset:3px;border-radius:6px}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+svg.i.f{fill:currentColor;stroke:none}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+.nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:rgba(11,13,23,.78);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:20px;height:64px}
+.brand{font-weight:800;font-size:21px;color:var(--tx);letter-spacing:-.02em;display:flex;align-items:center;gap:9px}
+.brand:hover{text-decoration:none}
+.logo{font-size:32px;width:1em;height:1em;flex:none;background:url(https://raw.githubusercontent.com/WPSent/WPSent/refs/heads/main/public/og-image.png) no-repeat;background-size:2.4373em 1.2186em;background-position:-.1075em -.1075em}
+.nav nav{display:flex;gap:4px;margin-left:12px}
+.nav nav a{color:var(--mu);padding:6px 12px;border-radius:8px;font-size:15px}
+.nav nav a:hover{color:var(--tx);background:var(--s1);text-decoration:none}
+.sp{flex:1}
+.soc{display:flex;gap:4px}
+.soc a{color:var(--mu);width:38px;height:38px;display:grid;place-items:center;border-radius:10px}
+.soc a:hover{color:var(--tx);background:var(--s1)}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:11px;font-weight:600;font-size:15px;border:1px solid var(--line);color:var(--tx);background:var(--s1);cursor:pointer;font-family:inherit}
+.btn:hover{text-decoration:none;border-color:var(--ac)}
+.btn.p{background:var(--ac);border-color:var(--ac);color:#0b0d17}
+.btn.p:hover{background:var(--ac2)}
+.hero{padding:76px 0 56px;display:grid;grid-template-columns:1fr 1.08fr;gap:48px;align-items:center}
+h1{font-size:clamp(38px,5.2vw,62px);line-height:1.04;letter-spacing:-.035em;font-weight:800}
+.lead{color:var(--mu);font-size:19px;margin:22px 0 30px;max-width:520px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--mu);border:1px solid var(--line);padding:5px 12px;border-radius:99px;margin-bottom:22px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(63,217,166,.15)}
+.demo{background:var(--s1);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 30px 80px -30px rgba(38,212,103,.35)}
+.fld{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.fld label{display:block;font-size:12.5px;color:var(--mu);margin-bottom:4px}
+.fld .w{grid-column:1/-1}
+input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:9px 11px;color:var(--tx);font:400 14px var(--mono)}
+input:focus{outline:none;border-color:var(--ac)}
+.tabs{display:flex;gap:4px;margin:14px 0 0;border-bottom:1px solid var(--line)}
+.tabs button{background:none;border:0;color:var(--mu);padding:8px 12px;font:500 14px var(--sans);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button[aria-selected=true]{color:var(--tx);border-color:var(--ac)}
+pre{position:relative;background:#0a0c16;border:1px solid var(--line);border-radius:11px;padding:16px;overflow-x:auto;font:400 13.5px/1.65 var(--mono);color:#cfd3ee}
+.demo pre{margin-top:12px;min-height:150px}
+.cp{position:absolute;top:8px;right:8px;background:var(--s2);border:1px solid var(--line);color:var(--mu);border-radius:7px;font:500 12px var(--sans);padding:4px 9px;cursor:pointer}
+.cp:hover{color:var(--tx)}
+.chat{margin-top:12px;background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:12px;min-height:74px;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.chat small{color:var(--mu);font-size:12px;align-self:flex-start}
+.b{background:#1d3a35;color:#d7fff1;padding:8px 12px;border-radius:12px 12px 3px 12px;max-width:88%;font-size:14.5px;animation:pop .35s ease-out}
+.b i{font-style:normal;color:var(--ok);font-size:12px;margin-left:8px}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.96)}}
+section.blk{padding:56px 0}
+h2{font-size:clamp(28px,3.4vw,38px);letter-spacing:-.025em;line-height:1.15;margin-bottom:8px}
+.sub{color:var(--mu);margin-bottom:32px;max-width:620px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--s1)}
+.steps div{padding:26px;border-right:1px solid var(--line)}
+.steps div:last-child{border:0}
+.steps b{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--ac);color:#0b0d17;font-size:14px;margin-bottom:12px}
+.steps h3{font-size:19px;margin-bottom:6px}
+.steps p{color:var(--mu);font-size:15px}
+.docs{display:grid;grid-template-columns:210px 1fr;gap:48px;padding-bottom:40px}
+.side{position:sticky;top:88px;align-self:start;display:flex;flex-direction:column;gap:2px;border-left:1px solid var(--line)}
+.side a{color:var(--mu);padding:6px 14px;margin-left:-1px;border-left:2px solid transparent;font-size:15px}
+.side a:hover{color:var(--tx);text-decoration:none}
+.side a.on{color:var(--tx);border-color:var(--ac)}
+article{padding:34px 0;border-bottom:1px solid var(--line)}
+article:first-child{padding-top:0}
+article h3{font-size:25px;letter-spacing:-.02em;margin-bottom:10px}
+article h4{font-size:16px;margin:22px 0 8px}
+article p,article li{color:#b9bedb;max-width:720px;margin-bottom:12px}
+article ul{padding-left:20px}
+code.k{font:500 13.5px var(--mono);background:var(--s2);border:1px solid var(--line);padding:1px 6px;border-radius:6px;color:var(--ac2)}
+.ep{display:flex;align-items:center;gap:10px;font:500 14px var(--mono);background:var(--s1);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:6px 0 16px;overflow-x:auto}
+.m{font-weight:500;padding:2px 8px;border-radius:6px;font-size:12.5px;background:rgba(110,160,255,.16);color:#9fc0ff}
+.m.g{background:rgba(63,217,166,.15);color:var(--ok)}
+.m.d{background:rgba(255,120,120,.15);color:#ff9a9a}
+table{width:100%;border-collapse:collapse;font-size:14.5px;margin:6px 0 16px;display:block;overflow-x:auto}
+th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--line);color:#b9bedb;vertical-align:top}
+th{color:var(--tx);font-weight:600;white-space:nowrap}
+td:first-child{font-family:var(--mono);font-size:13.5px;color:var(--ac2);white-space:nowrap}
+.acc{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{border:1px solid var(--line);border-radius:16px;background:var(--s1);padding:28px;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.card h3{font-size:23px;letter-spacing:-.02em}
+.card p{color:#b9bedb;margin:0}
+.card .btn{margin-top:auto}
+.price{font:500 13px var(--mono);color:var(--ac2);border:1px solid var(--line);border-radius:99px;padding:3px 12px}
+.card.h{background:linear-gradient(160deg,rgba(38,212,103,.1),transparent 60%),var(--s1);border-color:#245a3c}
+.botcard{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;border:1px solid var(--line);border-radius:18px;padding:30px 34px;background:linear-gradient(120deg,rgba(38,212,103,.14),rgba(110,160,255,.08)),var(--s1)}
+.botcard .sub{margin:0}
+.note{border:1px solid var(--line);border-left:3px solid var(--ac);background:var(--s1);border-radius:10px;padding:14px 18px;color:#b9bedb;margin:16px 0;max-width:720px}
+footer{border-top:1px solid var(--line);margin-top:30px;padding:44px 0 56px;background:linear-gradient(180deg,transparent,rgba(38,212,103,.06))}
+footer .wrap{display:flex;justify-content:space-between;gap:28px;flex-wrap:wrap;align-items:center}
+footer p{color:var(--mu);max-width:420px;margin-top:8px;font-size:15px}
+.links{display:flex;gap:10px;flex-wrap:wrap}
+.links a{display:inline-flex;align-items:center;gap:9px;padding:11px 18px;border:1px solid var(--line);border-radius:11px;background:var(--s1);color:var(--tx);font-weight:600;font-size:15px}
+.links a:hover{border-color:var(--ac);text-decoration:none;transform:translateY(-2px);transition:transform .15s}
+@media(max-width:940px){.acc{grid-template-columns:1fr}.hero{grid-template-columns:1fr;padding-top:48px}.docs{grid-template-columns:1fr}.side{display:none}.nav nav{display:none}.steps{grid-template-columns:1fr}.steps div{border-right:0;border-bottom:1px solid var(--line)}}
+@media(max-width:520px){.fld{grid-template-columns:1fr}.nav .btn{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="gh" viewBox="0 0 24 24"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></symbol>
+<symbol id="ig" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></symbol>
+<symbol id="bt" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 8V4M9 13h.01M15 13h.01M9 17h6"/></symbol>
+<symbol id="ml" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></symbol>
+<symbol id="gl" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></symbol>
+</svg>
+
+<header class="nav"><div class="wrap">
+<a class="brand" href="#top"><span class="logo" role="img" aria-label="WPSent logo"></span>WPSent</a>
+<nav aria-label="Main"><a href="#access">Get access</a><a href="#bot">Bot</a><a href="#auth">Docs</a><a href="#webhooks">Webhooks</a><a href="#errors">Errors</a></nav>
+<span class="sp"></span>
+<div class="soc">
+<a data-l="github" target="_blank" rel="noopener" aria-label="GitHub"><svg class="i f"><use href="#gh"/></svg></a>
+<a data-l="instagram" target="_blank" rel="noopener" aria-label="Instagram"><svg class="i"><use href="#ig"/></svg></a>
+<a data-l="portfolio" target="_blank" rel="noopener" aria-label="Portfolio"><svg class="i"><use href="#gl"/></svg></a>
+</div>
+<a class="btn p" href="#access">Get access</a>
+</div></header>
+
+<main id="top">
+<div class="wrap hero">
+<div>
+<span class="pill"><span class="dot"></span>Free and open source</span>
+<h1>Send WhatsApp messages from your own code.</h1>
+<p class="lead">Scan a QR code once to link your WhatsApp. After that, send messages, read your message log and get replies on your own webhook with plain HTTP requests.</p>
+<div class="cta"><a class="btn p" data-l="repo" target="_blank" rel="noopener">Self-host it free</a><a class="btn" href="#auth">Read the docs</a></div>
+</div>
+<div class="demo" aria-label="Request builder">
+<div class="fld">
+<div class="w"><label for="host">Server URL</label><input id="host" placeholder="https://app.wpsent.xyz" autocomplete="off"></div>
+<div><label for="cid">Client ID</label><input id="cid" placeholder="cid_a1b2c3d4e5f6" autocomplete="off"></div>
+<div><label for="key">Secret Key</label><input id="key" placeholder="your-secret-key" autocomplete="off"></div>
+<div><label for="to">To (with country code)</label><input id="to" placeholder="8801700000000" autocomplete="off"></div>
+<div><label for="msg">Message</label><input id="msg" value="Hello from WPSent!" autocomplete="off"></div>
+</div>
+<div class="tabs" role="tablist"><button role="tab" aria-selected="true" data-t="curl">cURL</button><button role="tab" aria-selected="false" data-t="node">Node.js</button><button role="tab" aria-selected="false" data-t="py">Python</button><button role="tab" aria-selected="false" data-t="php">PHP</button></div>
+<pre id="gen"><code></code></pre>
+<div class="chat" id="chat"><small>Preview only. Nothing is sent from this page.</small></div>
+<div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn p" id="prev">Preview message</button><button class="btn" id="copyGen">Copy code</button></div>
+</div>
+</div>
+
+<section class="blk wrap" id="access" style="padding-bottom:24px">
+<h2>How to use WPSent</h2>
+<p class="sub">WPSent is open source and non-profit. There are two ways to run it.</p>
+<div class="acc">
+<div class="card h"><span class="price">Free</span><h3>Self-host it</h3>
+<p>Run WPSent on your own server with your own MongoDB and Chromium. You own the data and the number, and nothing here costs you a cent.</p>
+<p>The repo has the code and setup instructions. Wire it up, point your apps at your server, and use the docs below.</p>
+<a class="btn p" data-l="repo" target="_blank" rel="noopener"><svg class="i f"><use href="#gh"/></svg>View the repo on GitHub</a></div>
+<div class="card"><span class="price">About $5 to $6</span><h3>Use the hosted server</h3>
+<p>The public server at app.wpsent.xyz is closed to new sign-ups. Every linked number runs its own browser and uses real RAM, and this project has no funding.</p>
+<p>If you still want to use it, please pay $5 to $6 towards the server costs. Email the admin at <b>abdullahaladnan95@gmail.com</b> for payment info.</p>
+<a class="btn" data-l="mail"><svg class="i"><use href="#ml"/></svg>Email the admin</a></div>
+</div>
+</section>
+
+<section class="blk wrap" id="start" style="padding-top:32px">
+<h2>Up and running in three steps</h2>
+<p class="sub">Once you have a server, linking takes minutes. No Meta approval or business account: you link the WhatsApp you already use, the same way as WhatsApp Web.</p>
+<div class="steps">
+<div><b>1</b><h3>Scan the QR</h3><p>Enter your phone number in your server's dashboard and scan the QR code from WhatsApp, under Linked devices.</p></div>
+<div><b>2</b><h3>Copy your keys</h3><p>Your Client ID and Secret Key appear in the dashboard. Keep the Secret Key private.</p></div>
+<div><b>3</b><h3>Call the API</h3><p>Send a <code class="k">POST /send</code> request and the message leaves from your own WhatsApp number.</p></div>
+</div>
+</section>
+
+<section class="blk wrap" id="bot" style="padding:24px 24px 8px">
+<div class="botcard"><div><h2>Automate without writing code</h2><p class="sub">Use the WPSent Bot to set up automations on top of your linked WhatsApp number, found at bot.wpsent.xyz.</p></div><a class="btn p" data-l="bot" target="_blank" rel="noopener">Open WPSent Bot</a></div>
+</section>
+
+<section class="blk wrap" style="padding-top:40px">
+<h2>Documentation</h2>
+<p class="sub">Everything the API does. Requests go to your own server if you self-host, or to <code class="k">https://app.wpsent.xyz</code> if you have hosted access. The examples below use the hosted address.</p>
+<div class="docs">
+<nav class="side" aria-label="Docs"><a href="#auth">Authentication</a><a href="#send">Send a message</a><a href="#logs">Message logs</a><a href="#status">Connection status</a><a href="#webhooks">Webhooks</a><a href="#incoming">Incoming messages</a><a href="#recover">Lost session or key</a><a href="#errors">Errors</a><a href="#notes">Good to know</a></nav>
+<div>
+<article id="auth"><h3>Authentication</h3>
+<p>Every API request needs your Client ID and Secret Key. Pass them as query parameters or as headers.</p>
+<table><tr><th>Query</th><th>Header</th></tr><tr><td>clientid</td><td>x-client-id</td></tr><tr><td>key</td><td>x-api-key</td></tr></table>
+<p>Headers keep your key out of server logs and browser history, so prefer them in production.</p></article>
+
+<article id="send"><h3>Send a message</h3>
+<div class="ep"><span class="m">POST</span>/send</div>
+<table><tr><th>Field</th><th>Where</th><th>Details</th></tr>
+<tr><td>to</td><td>query or body</td><td>Number with country code, digits only (8801700000000). A full chat ID containing @ also works.</td></tr>
+<tr><td>message</td><td>JSON body</td><td>The text to send.</td></tr></table>
+<pre><code>curl -X POST "https://app.wpsent.xyz/send?to=8801700000000" \
+  -H "x-client-id: cid_a1b2c3d4e5f6" \
+  -H "x-api-key: YOUR_SECRET_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"message":"Your order has shipped"}'</code></pre>
+<h4>Response</h4>
+<pre><code>{ "ok": true, "logId": "665f1c0e8a1b2c3d4e5f6a7b" }</code></pre></article>
+
+<article id="logs"><h3>Message logs</h3>
+<div class="ep"><span class="m g">GET</span>/logs</div>
+<p>Returns your last 100 messages, newest first. Older entries are removed automatically.</p>
+<pre><code>[{ "direction": "outbound", "to": "8801700000000", "body": "Hello!",
+   "type": "text", "status": "sent", "timestamp": "2026-01-01T10:00:00.000Z" }]</code></pre></article>
+
+<article id="status"><h3>Connection status</h3>
+<div class="ep"><span class="m g">GET</span>/status</div>
+<pre><code>{ "phone": "8801700000000", "status": "ready" }</code></pre>
+<table><tr><th>Status</th><th>Meaning</th></tr>
+<tr><td>ready</td><td>Connected. You can send messages.</td></tr>
+<tr><td>qr_ready</td><td>Waiting for you to scan the QR code.</td></tr>
+<tr><td>initializing</td><td>Starting up. Wait a few seconds.</td></tr>
+<tr><td>disconnected</td><td>Connection dropped. It reconnects on its own.</td></tr>
+<tr><td>auth_failure</td><td>The saved login is no longer valid. Use Rescan in the dashboard.</td></tr>
+<tr><td>error</td><td>The session failed to start. It retries automatically.</td></tr>
+<tr><td>not_started</td><td>No session is running for this number yet.</td></tr></table></article>
+
+<article id="webhooks"><h3>Webhooks</h3>
+<p>Add a webhook to get a call on your server whenever someone messages you. Manage them in the dashboard or with the API.</p>
+<div class="ep"><span class="m">POST</span>/webhooks</div>
+<pre><code>{ "url": "https://example.com/hook", "method": "POST", "label": "My app" }</code></pre>
+<p><code class="k">method</code> is <code class="k">POST</code> (JSON body) or <code class="k">GET</code> (query parameters). The URL must start with <code class="k">http://</code> or <code class="k">https://</code>.</p>
+<div class="ep"><span class="m">PATCH</span>/webhooks/:id <span style="color:var(--mu)">body: { "active": false } pauses it</span></div>
+<div class="ep"><span class="m d">DELETE</span>/webhooks/:id</div>
+<p>Both return <code class="k">{ "ok": true, "webhooks": [...] }</code> with your current list.</p></article>
+
+<article id="incoming"><h3>Incoming messages</h3>
+<p>Your webhook receives this payload for every message or reaction you get. Respond within 8 seconds.</p>
+<pre><code>{ "event": "message_received", "from": "8801700000000",
+  "body": "Hi, is this still available?", "type": "text",
+  "timestamp": "2026-01-01T10:00:00.000Z" }</code></pre>
+<p><code class="k">type</code> is one of text, image, video, audio, document, sticker, location, contact or reaction. Media arrives as a short label such as <code class="k">[Image]</code>, not the file itself.</p></article>
+
+<article id="recover"><h3>Lost session or key</h3>
+<ul><li><b>WhatsApp got disconnected:</b> sign in with your Secret Key and press <b>Rescan</b> in the dashboard. Your Client ID and Secret Key stay the same, and the old saved session is cleared.</li>
+<li><b>Forgot your Secret Key:</b> choose Reset Secret Key on the sign-in page. We send a 6-digit code to your own WhatsApp chat, or ask for a QR scan if WhatsApp is not connected. Resetting creates a new Client ID and Secret Key and removes your webhooks.</li></ul>
+<p>Five wrong key attempts lock sign-in for 15 minutes.</p></article>
+
+<article id="errors"><h3>Errors</h3>
+<table><tr><th>Code</th><th>Cause</th></tr>
+<tr><td>400</td><td>Missing <code class="k">to</code> or <code class="k">message</code>, or an invalid webhook URL.</td></tr>
+<tr><td>401</td><td>Client ID or Secret Key not provided.</td></tr>
+<tr><td>403</td><td>Unknown Client ID or wrong Secret Key.</td></tr>
+<tr><td>500</td><td>WhatsApp could not send it, for example the session is not ready. The body has an <code class="k">error</code> message and a <code class="k">logId</code>.</td></tr></table>
+<pre><code>{ "error": "WhatsApp session not ready" }</code></pre></article>
+
+<article id="notes" style="border:0"><h3>Good to know</h3>
+<div class="note">WPSent controls WhatsApp through WhatsApp Web. It is not the official WhatsApp Business API. Message people who expect to hear from you, because spam can get a number banned.</div>
+<ul><li>Keep your Secret Key on your server. Never put it in front-end code.</li><li>Rotating your key signs out every other session.</li></ul></article>
+</div></div>
+</section>
+</main>
+
+<footer><div class="wrap">
+<div><a class="brand" href="#top"><span class="logo" role="img" aria-label="WPSent logo"></span>WPSent</a><p>Open source and non-profit. Self-host it for free, or email the admin about the hosted server.</p></div>
+<div class="links">
+<a data-l="repo" target="_blank" rel="noopener"><svg class="i f"><use href="#gh"/></svg>Source code</a>
+<a data-l="bot" target="_blank" rel="noopener"><svg class="i"><use href="#bt"/></svg>WPSent Bot</a>
+<a data-l="github" target="_blank" rel="noopener"><svg class="i f"><use href="#gh"/></svg>GitHub</a>
+<a data-l="instagram" target="_blank" rel="noopener"><svg class="i"><use href="#ig"/></svg>Instagram</a>
+<a data-l="portfolio" target="_blank" rel="noopener"><svg class="i"><use href="#gl"/></svg>Portfolio</a>
+</div></div></footer>
+
+<script>
+const L={github:'https://github.com/adnanisagoodboy',instagram:'https://instagram.com/adnanisagoodboy',portfolio:'https://AdnanD.com',repo:'https://github.com/WPSent/WPSent',mail:'mailto:abdullahaladnan95@gmail.com?subject=WPSent%20hosted%20access',app:'https://app.wpsent.xyz',bot:'https://bot.wpsent.xyz/',host:'https://app.wpsent.xyz'};
+document.querySelectorAll('[data-l]').forEach(a=>a.href=L[a.dataset.l]);
+const $=s=>document.querySelector(s);
+let tab='curl';
+const val=()=>({h:$('#host').value.trim().replace(/\/+$/,'')||L.host,c:$('#cid').value.trim()||'cid_a1b2c3d4e5f6',k:$('#key').value.trim()||'YOUR_SECRET_KEY',t:$('#to').value.trim()||'8801700000000',m:$('#msg').value||'Hello!'});
+const js=JSON.stringify;
+const gen={
+curl:x=>`curl -X POST "${x.h}/send?to=${x.t}" \\\n  -H "x-client-id: ${x.c}" \\\n  -H "x-api-key: ${x.k}" \\\n  -H "Content-Type: application/json" \\\n  -d '${js({message:x.m})}'`,
+node:x=>`const res = await fetch("${x.h}/send?to=${x.t}", {\n  method: "POST",\n  headers: {\n    "x-client-id": "${x.c}",\n    "x-api-key": "${x.k}",\n    "Content-Type": "application/json"\n  },\n  body: JSON.stringify({ message: ${js(x.m)} })\n});\nconsole.log(await res.json());`,
+py:x=>`import requests\n\nres = requests.post(\n    "${x.h}/send",\n    params={"to": "${x.t}"},\n    headers={"x-client-id": "${x.c}", "x-api-key": "${x.k}"},\n    json={"message": ${js(x.m)}},\n)\nprint(res.json())`,
+php:x=>`<?php\n$ch = curl_init("${x.h}/send?to=${x.t}");\ncurl_setopt_array($ch, [\n  CURLOPT_POST => true,\n  CURLOPT_RETURNTRANSFER => true,\n  CURLOPT_HTTPHEADER => [\n    "x-client-id: ${x.c}",\n    "x-api-key: ${x.k}",\n    "Content-Type: application/json"\n  ],\n  CURLOPT_POSTFIELDS => json_encode(["message" => ${js(x.m)}])\n]);\necho curl_exec($ch);`
+};
+const render=()=>{$('#gen code').textContent=gen[tab](val())};
+['#host','#cid','#key','#to','#msg'].forEach(s=>$(s).addEventListener('input',render));
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{tab=b.dataset.t;document.querySelectorAll('.tabs button').forEach(o=>o.setAttribute('aria-selected',o===b));render()}));
+render();
+const copy=(text,btn)=>{const done=()=>{const o=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=o,1400)};navigator.clipboard?navigator.clipboard.writeText(text).then(done,done):done()};
+$('#copyGen').addEventListener('click',e=>copy($('#gen code').textContent,e.currentTarget));
+$('#prev').addEventListener('click',()=>{const b=document.createElement('div');b.className='b';b.textContent=val().m;const t=document.createElement('i');t.textContent='sent';b.appendChild(t);$('#chat').appendChild(b);setTimeout(()=>t.textContent='delivered',700)});
+document.querySelectorAll('article pre').forEach(p=>{const b=document.createElement('button');b.className='cp';b.textContent='Copy';b.addEventListener('click',()=>copy(p.querySelector('code').textContent,b));p.appendChild(b)});
+const links=[...document.querySelectorAll('.side a')];
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id))}}),{rootMargin:'-30% 0px -60% 0px'});
+document.querySelectorAll('article').forEach(a=>io.observe(a));
+</script>
+</body>
+</html>
